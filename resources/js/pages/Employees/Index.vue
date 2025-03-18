@@ -1,46 +1,33 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Employee, type BreadcrumbItem, type SharedData } from '@/types';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage, Link, router } from '@inertiajs/vue3';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { computed } from 'vue';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash, CirclePlus } from 'lucide-vue-next';
-interface EmployeesPageProps extends ShareData {
-    employees: Employee[];
+import { computed } from 'vue';
+import { Employee } from '@/types';
+
+interface EmployeePageProps extends SharedData {
+  employees: Employee[];
 }
 
-const { props } = usePage<EmployeesPageProps>();
+const { props } = usePage<EmployeePageProps>();
 const employees = computed(() => props.employees);
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Employees', href: '/employees' }];
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Employees',
-        href: '/employees',
+const deleteEmployee = async (id: number) => {
+  if (!window.confirm('Are you sure you want to delete this employee?')) return;
+  router.delete(`/employees/${id}`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      router.visit('/employees', { replace: true });
     },
-];
-
-const deleteEmployee = async (id:number) => {
-    if (!window.confirm('¿Esta seguro que quiere eliminar este registro?')) return;
-
-    router.delete(`/employees/${id}`, {
-        preserveScroll: true,
-        onSuccess: () => {
-            router.visit(`/employes`, { replace: true });
-        },
-        onError: (errors) => {
-            console.error('Error eliminando el registro: ', errors);
-        }
-    });
-}
+    onError: (errors) => {
+      console.error('Error deleting employee:', errors);
+    }
+  });
+};
 </script>
 
 <template>
@@ -82,13 +69,13 @@ const deleteEmployee = async (id:number) => {
                             {{new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(employee.salario) }}
                         </TableCell>
                         <TableCell class="text-right">
-                            <Button as-child size="sm" class="bg-blue-500 text-white hover:bg-blue-700">
-                                <Link href="`/employees/${employee.id}/edit`">
-                                    <Pencil />
-                                </Link>
+                            <Button as-child size="sm" class="bg-blue-500 hover:bg-blue-700 text-white">
+                            <Link :href="`/employees/${employee.id}/edit`">
+                                <Pencil />
+                            </Link>
                             </Button>
-                            <Button as-child size="sm" class="bg-rose-500 text-white hover:bg-rose-700" @click="deleteEmployee(employee.id)" >
-                                <Trash />
+                            <Button size="sm" class="bg-rose-500 hover:bg-rose-700 text-white" @click="deleteEmployee(employee.id)">
+                            <Trash />
                             </Button>
                         </TableCell>
                     </TableRow>

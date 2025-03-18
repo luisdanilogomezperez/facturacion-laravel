@@ -1,11 +1,16 @@
 <script setup lang="ts">
     import AppLayout from '@/layouts/AppLayout.vue';
-    import { Employee, type BreadcrumbItem, type SharedData } from '@/types';
+    import { Employee, type SharedData } from '@/types';
     import { Head, usePage, Link, router } from '@inertiajs/vue3';
     import { ref } from 'vue';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
+
+    type BreadcrumbItem = {
+        title: string;
+        href: string;
+    };
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
