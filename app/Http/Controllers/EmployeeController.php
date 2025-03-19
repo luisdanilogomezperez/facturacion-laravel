@@ -64,7 +64,7 @@ class EmployeeController extends Controller
             'posicion' => 'required|string|max:255',
             'salario' => 'required|numeric|min:0'
         ]);
-        $employee::update($request->all());
+        $employee->update($request->all());
         return redirect()->route('employees.index');
     }
 
